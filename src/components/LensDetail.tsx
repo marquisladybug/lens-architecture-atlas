@@ -1,5 +1,6 @@
 import type { LensArchitecture } from "../types/lens";
 import LensDiagram from "./LensDiagram";
+import OpticalPlayground from "./OpticalPlayground";
 
 interface LensDetailProps {
   lens: LensArchitecture;
@@ -26,6 +27,8 @@ export default function LensDetail({ lens }: LensDetailProps) {
       </div>
 
       <LensDiagram diagram={lens.diagram} title={lens.name} />
+
+      <OpticalPlayground lensName={lens.name} preset={lens.playground} />
 
       <p className="description">{lens.description}</p>
 

@@ -28,6 +28,42 @@ export interface LensDiagramData {
   stop?: ApertureStop;
 }
 
+export type PlaygroundSurfaceShape = "convex" | "concave" | "flat" | "meniscus";
+
+export interface PlaygroundSurface {
+  id: string;
+  shape: PlaygroundSurfaceShape;
+  powerHint: number;
+}
+
+export interface PlaygroundElement {
+  id: string;
+  surfaces: PlaygroundSurface[];
+}
+
+export interface PlaygroundGroup {
+  id: string;
+  label: string;
+  position: number;
+  power: number;
+  diameter: number;
+  elements: PlaygroundElement[];
+}
+
+export interface OpticalPlaygroundPreset {
+  groupCount: number;
+  effectivePowerDistribution: number[];
+  stopPosition: number;
+  symmetryTendency: "low" | "moderate" | "high";
+  backFocusTendency: "short" | "balanced" | "long";
+  speedTendency: "slow" | "moderate" | "fast";
+  groups: PlaygroundGroup[];
+  defaultObjectDistance: number;
+  defaultObjectHeight: number;
+  defaultSensorPosition: number;
+  defaultApertureSize: number;
+}
+
 export interface LensArchitecture {
   id: string;
   name: string;
@@ -41,4 +77,5 @@ export interface LensArchitecture {
   typicalUse: string;
   representativeExamples: string[];
   diagram: LensDiagramData;
+  playground: OpticalPlaygroundPreset;
 }
