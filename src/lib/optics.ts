@@ -6,7 +6,10 @@ export interface ElementAdjustment {
   tilt: number;
 }
 
+export type LightObjectMode = "infinity" | "near" | "off-axis";
+
 export interface PlaygroundControls {
+  lightObjectMode: LightObjectMode;
   objectDistance: number;
   objectHeight: number;
   infinityMode: boolean;
@@ -35,6 +38,7 @@ export interface OpticalPlaygroundResult {
   stopPosition: number;
   focusPosition: number;
   sensorBlurRadius: number;
+  sensorImageY: number;
   focusState: "focused" | "front-focus" | "back-focus";
   rays: OpticalRayTrace[];
 }
@@ -145,8 +149,9 @@ function traceRay(
   elements: PlaygroundElement[],
   stopPosition: number,
   sensorPosition: number,
+  initialTheta?: number,
 ) {
-  const theta = solveThetaForStop(startY, startX, targetStopY, stopPosition, elements);
+  const theta = initialTheta ?? solveThetaForStop(startY, startX, targetStopY, stopPosition, elements);
   let ray: RayState = { y: startY, theta };
   let x = startX;
   const points: OpticalRayPoint[] = [{ x, y: ray.y }];
@@ -195,14 +200,22 @@ export function calculateOpticalPlayground(
   const startX = controls.infinityMode ? -150 : -controls.objectDistance;
   const objectHeight = controls.objectHeight;
   const apertureRadius = controls.apertureSize / 2;
-  const objectY = controls.infinityMode ? objectHeight : -objectHeight;
   const sensorPosition = controls.sensorPosition;
-
-  const rawRays = [
-    traceRay("marginal-upper", "marginal ray", objectY, startX, -apertureRadius, elements, stopPosition, sensorPosition),
-    traceRay("chief", "chief ray", objectY, startX, 0, elements, stopPosition, sensorPosition),
-    traceRay("marginal-lower", "marginal ray", objectY, startX, apertureRadius, elements, stopPosition, sensorPosition),
-  ];
+  const mode = controls.infinityMode ? "infinity" : controls.lightObjectMode;
+  const fieldAngle = mode === "off-axis" ? 0.12 : 0;
+  const objectY = mode === "near" ? -objectHeight : objectHeight;
+  const rawRays =
+    mode === "near"
+      ? [
+          traceRay("marginal-upper", "marginal ray", objectY, startX, -apertureRadius, elements, stopPosition, sensorPosition),
+          traceRay("chief", "chief ray", objectY, startX, 0, elements, stopPosition, sensorPosition),
+          traceRay("marginal-lower", "marginal ray", objectY, startX, apertureRadius, elements, stopPosition, sensorPosition),
+        ]
+      : [
+          traceRay("marginal-upper", "parallel marginal", -apertureRadius, -150, -apertureRadius, elements, stopPosition, sensorPosition, fieldAngle),
+          traceRay("chief", "parallel chief", 0, -150, 0, elements, stopPosition, sensorPosition, fieldAngle),
+          traceRay("marginal-lower", "parallel marginal", apertureRadius, -150, apertureRadius, elements, stopPosition, sensorPosition, fieldAngle),
+        ];
 
   const focusCandidates = rawRays
     .filter((ray) => Math.abs(ray.exitTheta) > EPSILON)
@@ -216,6 +229,7 @@ export function calculateOpticalPlayground(
 
   const sensorYs = rawRays.map((ray) => ray.sensorY);
   const sensorBlurRadius = (Math.max(...sensorYs) - Math.min(...sensorYs)) / 2;
+  const sensorImageY = sensorYs.reduce((sum, y) => sum + y, 0) / sensorYs.length;
   const focusDelta = sensorPosition - focusPosition;
   const focusState =
     Math.abs(focusDelta) < 4 ? "focused" : focusDelta < 0 ? "front-focus" : "back-focus";
@@ -226,6 +240,7 @@ export function calculateOpticalPlayground(
     stopPosition,
     focusPosition,
     sensorBlurRadius,
+    sensorImageY,
     focusState,
     rays: rawRays.map(({ exitX: _exitX, exitTheta: _exitTheta, exitY: _exitY, ...ray }) => ray),
   };

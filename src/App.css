@@ -381,6 +381,136 @@ h3 {
   background: #45504e;
 }
 
+.playground-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 8px;
+}
+
+.reset-button.secondary {
+  border-color: #cfc6b8;
+  background: #fffdfa;
+  color: #51493f;
+}
+
+.reset-button.secondary:hover {
+  background: #f1ece4;
+}
+
+.selected-element-readout {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.selected-element-readout div {
+  display: grid;
+  gap: 2px;
+  border: 1px solid #c7d1cf;
+  border-radius: 4px;
+  background: #eef2f1;
+  padding: 8px 10px;
+}
+
+.selected-element-readout span {
+  color: #61706f;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.selected-element-readout strong {
+  min-width: 0;
+  color: #24302f;
+  font-size: 0.88rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.selected-element-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #c7d1cf;
+  border-radius: 4px;
+  background: rgba(238, 242, 241, 0.72);
+  padding: 14px;
+}
+
+.selected-element-panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.selected-element-panel-heading h4 {
+  margin: 0;
+  color: #181512;
+  font-size: 1rem;
+}
+
+.selected-element-panel-heading p {
+  margin: 2px 0 0;
+  color: #61706f;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.selected-element-panel-heading button {
+  border: 1px solid #6e7e89;
+  border-radius: 4px;
+  background: #fffdfa;
+  color: #354548;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+}
+
+.selected-element-sliders {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.selected-element-sliders label {
+  display: grid;
+  gap: 6px;
+  color: #354548;
+  font-size: 0.84rem;
+}
+
+.selected-element-sliders input[type="range"] {
+  width: 100%;
+  accent-color: #445f8f;
+}
+
+.selected-element-sliders small {
+  color: #61706f;
+  font-family: "Courier New", ui-monospace, monospace;
+}
+
+.mode-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mode-selector button {
+  border: 1px solid #cfc6b8;
+  border-radius: 4px;
+  background: #fffdfa;
+  color: #51493f;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+.mode-selector button.active {
+  border-color: #445f8f;
+  background: #eef2f8;
+  color: #26375d;
+}
+
 .playground-stage {
   overflow: hidden;
   border: 1px solid #d8d1c4;
@@ -395,7 +525,7 @@ h3 {
 .playground-stage svg {
   display: block;
   width: 100%;
-  min-height: 260px;
+  min-height: 320px;
 }
 
 .play-axis {
@@ -416,22 +546,46 @@ h3 {
   stroke-width: 2;
 }
 
+.tree-object circle {
+  fill: rgba(153, 184, 148, 0.88);
+}
+
+.parallel-source line {
+  stroke: #445f8f;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.parallel-source polygon {
+  fill: #445f8f;
+}
+
 .play-ray {
   fill: none;
-  opacity: 0.86;
+  opacity: 0.94;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 2;
 }
 
 .play-ray.chief {
   stroke: #445f8f;
+  stroke-width: 3;
 }
 
 .play-ray.marginal-upper,
 .play-ray.marginal-lower {
   stroke: #a06147;
-  stroke-dasharray: 5 4;
+  stroke-dasharray: 8 5;
+  stroke-width: 2.1;
+}
+
+.play-ray.baseline {
+  opacity: 0.24;
+  stroke-width: 1.7;
+}
+
+.play-ray.current {
+  opacity: 0.96;
 }
 
 .play-lens-group rect {
@@ -458,6 +612,22 @@ h3 {
 .play-element rect {
   stroke: #26221d;
   stroke-width: 1.2;
+}
+
+.play-element {
+  cursor: pointer;
+}
+
+.play-element.selected rect {
+  stroke: #1f2f5d;
+  stroke-width: 2.4;
+}
+
+.selected-element-ring {
+  fill: none;
+  stroke: #445f8f;
+  stroke-dasharray: 5 4;
+  stroke-width: 2;
 }
 
 .play-element.positive rect {
@@ -488,33 +658,39 @@ h3 {
 }
 
 .play-focus line {
-  stroke: #6e7e89;
-  stroke-dasharray: 5 5;
-  stroke-width: 1.4;
+  stroke: #4c7052;
+  stroke-dasharray: 3 4;
+  stroke-width: 2.2;
 }
 
 .play-sensor line {
   stroke: #2f3534;
-  stroke-width: 2;
+  stroke-width: 3;
 }
 
-.play-sensor circle {
+.sensor-blur-circle {
   fill: rgba(155, 124, 71, 0.18);
   stroke: #9b7c47;
-  stroke-width: 1.3;
+  stroke-width: 1.8;
 }
 
-.play-sensor.focused circle {
+.sensor-image-point {
+  fill: #2f3534;
+  stroke: #fffdfa;
+  stroke-width: 1.4;
+}
+
+.play-sensor.focused .sensor-blur-circle {
   fill: rgba(76, 112, 82, 0.18);
   stroke: #4c7052;
 }
 
-.play-sensor.front-focus circle {
+.play-sensor.front-focus .sensor-blur-circle {
   fill: rgba(160, 97, 71, 0.2);
   stroke: #a06147;
 }
 
-.play-sensor.back-focus circle {
+.play-sensor.back-focus .sensor-blur-circle {
   fill: rgba(68, 95, 143, 0.18);
   stroke: #445f8f;
 }
@@ -649,15 +825,39 @@ h3 {
   align-items: start;
   justify-content: space-between;
   gap: 12px;
+  cursor: pointer;
 }
 
-.element-control-heading h4 {
+.element-control-heading::-webkit-details-marker {
+  display: none;
+}
+
+.element-control-card[open] {
+  border-color: #c7d1cf;
+}
+
+.element-control-card.selected {
+  background: rgba(238, 242, 241, 0.72);
+  margin-inline: -6px;
+  padding: 12px 6px 0;
+}
+
+.element-name-button {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  text-align: left;
+}
+
+.element-name-button span {
+  display: block;
   margin: 0;
   color: #181512;
   font-size: 0.95rem;
+  font-weight: 650;
 }
 
-.element-control-heading p {
+.element-name-button p {
   margin: 2px 0 0;
   color: #756a5c;
   font-family: "Courier New", ui-monospace, monospace;
@@ -795,6 +995,18 @@ h3 {
     display: grid;
   }
 
+  .playground-actions {
+    justify-content: start;
+  }
+
+  .selected-element-readout {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .selected-element-sliders {
+    grid-template-columns: 1fr;
+  }
+
   .playground-controls {
     grid-template-columns: 1fr;
   }
@@ -861,7 +1073,28 @@ h3 {
   }
 
   .playground-stage svg {
-    min-height: 220px;
+    min-height: 260px;
+  }
+
+  .selected-element-readout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .selected-element-panel {
+    padding: 12px;
+  }
+
+  .selected-element-panel-heading {
+    display: grid;
+  }
+
+  .selected-element-panel-heading button {
+    justify-self: start;
+  }
+
+  .mode-selector {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .playground-controls label {
@@ -891,11 +1124,11 @@ h3 {
   }
 
   .element-control-heading {
-    display: grid;
+    align-items: start;
   }
 
   .element-control-heading button {
-    justify-self: start;
+    flex: 0 0 auto;
   }
 
   .element-control-card label {
