@@ -711,6 +711,13 @@ h3 {
   font-size: 0.84rem;
 }
 
+.playground-helper {
+  max-width: 780px;
+  margin: -4px 0 0;
+  color: #756a5c;
+  font-size: 0.84rem;
+}
+
 .playground-controls {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -734,6 +741,7 @@ h3 {
   color: #756a5c;
   font-family: "Courier New", ui-monospace, monospace;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .playground-controls input[type="range"] {

@@ -123,6 +123,7 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
     near: "Near object",
     "off-axis": "Off-axis field",
   };
+  const isNearObjectMode = controls.lightObjectMode === "near";
 
   const updateControl = <Key extends ScalarControlKey>(key: Key, value: PlaygroundControls[Key]) => {
     setControls((current) => ({ ...current, [key]: value }));
@@ -376,6 +377,10 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
         <span>sensor blur radius {result.sensorBlurRadius.toFixed(1)} rel.</span>
         <span>image point {result.sensorImageY.toFixed(1)} rel.</span>
       </div>
+      <p className="playground-helper">
+        Focus plane is where the traced rays meet. Sensor plane is the adjustable image plane. Image point marks the ray
+        bundle center on the sensor; blur circle shows how spread out it is.
+      </p>
 
       <div className="playground-controls">
         <label>
@@ -385,14 +390,14 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
             min="70"
             max="150"
             value={controls.objectDistance}
-            disabled={controls.lightObjectMode !== "near"}
+            disabled={!isNearObjectMode}
             onChange={(event) => updateControl("objectDistance", Number(event.target.value))}
           />
-          <small>{controls.lightObjectMode === "near" ? controls.objectDistance : "parallel"}</small>
+          <small>{isNearObjectMode ? `${controls.objectDistance} rel.` : "parallel rays from infinity"}</small>
         </label>
 
         <label>
-          <span>Object height</span>
+          <span>{isNearObjectMode ? "Object height" : "Field height"}</span>
           <input
             type="range"
             min="8"
@@ -400,7 +405,7 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
             value={controls.objectHeight}
             onChange={(event) => updateControl("objectHeight", Number(event.target.value))}
           />
-          <small>{controls.objectHeight}</small>
+          <small>{controls.objectHeight} rel.</small>
         </label>
 
         <label>
