@@ -11,22 +11,26 @@ function App() {
   const [selectedId, setSelectedId] = useState(lenses[0].id);
 
   const filteredLenses = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const queryTerms = query
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
 
     return lenses.filter((lens) => {
       const matchesCategory = selectedCategory === "All" || lens.category === selectedCategory;
       const searchableText = [
         lens.name,
         lens.category,
-        lens.description,
         lens.typicalUse,
         ...lens.traits,
         ...lens.representativeExamples,
+        ...lens.cameraTags,
       ]
         .join(" ")
         .toLowerCase();
 
-      return matchesCategory && (!normalizedQuery || searchableText.includes(normalizedQuery));
+      return matchesCategory && (!queryTerms.length || queryTerms.every((term) => searchableText.includes(term)));
     });
   }, [query, selectedCategory]);
 

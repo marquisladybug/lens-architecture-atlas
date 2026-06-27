@@ -8,7 +8,9 @@ export const lenses: LensArchitecture[] = [
     elements: 3,
     groups: 3,
     description: "A foundational three-element anastigmat that balances simplicity, compactness, and correction.",
+    whyMatters: "The triplet shows how much character and usable sharpness can come from very few elements, which is why many small cameras and vintage lenses still feel so direct.",
     traits: ["simple construction", "classic rendering", "moderate speed", "good central sharpness stopped down"],
+    cameraTags: ["compact", "low air-glass surfaces", "long back focus"],
     typicalUse: "Compact cameras, enlarging lenses, and historical general-purpose photography.",
     representativeExamples: ["Taylor-Hobson Cooke Triplet", "Meyer Trioplan", "Voigtlander Vaskar"],
     diagram: {
@@ -27,7 +29,9 @@ export const lenses: LensArchitecture[] = [
     elements: 4,
     groups: 3,
     description: "A compact four-element derivative of the triplet, famous for practical sharpness and small size.",
+    whyMatters: "The Tessar became a benchmark for pocketable, reliable image quality, making it a useful reference point for judging compact standard lenses.",
     traits: ["compact", "high contrast", "efficient correction", "often crisp when stopped down"],
+    cameraTags: ["compact", "low air-glass surfaces", "long back focus"],
     typicalUse: "Everyday standard lenses, folding cameras, and compact fixed-lens cameras.",
     representativeExamples: ["Zeiss Tessar 50mm f/2.8", "Leitz Elmar 50mm f/3.5", "Nikon 45mm f/2.8P"],
     diagram: {
@@ -47,7 +51,9 @@ export const lenses: LensArchitecture[] = [
     elements: 6,
     groups: 4,
     description: "A near-symmetrical normal-lens archetype known for balanced correction and broad influence.",
+    whyMatters: "Double Gauss designs shaped the fast normal lens: small enough for everyday cameras, bright enough for low light, and balanced enough to become a system-lens staple.",
     traits: ["balanced aberration control", "normal focal lengths", "good speed potential", "smooth transition zones"],
+    cameraTags: ["fast normal", "symmetric", "SLR friendly", "rangefinder friendly"],
     typicalUse: "Standard lenses for rangefinder and SLR systems.",
     representativeExamples: ["Zeiss Planar 50mm f/1.4", "Canon FD 50mm f/1.4", "Nikon Nikkor 50mm f/1.4"],
     diagram: {
@@ -69,7 +75,9 @@ export const lenses: LensArchitecture[] = [
     elements: 6,
     groups: 4,
     description: "A faster Double Gauss variant associated with energetic rendering and strong subject separation.",
+    whyMatters: "Biotar-type lenses are a reminder that optical design is not only correction; their speed and off-axis behavior are a big part of classic portrait taste.",
     traits: ["fast aperture", "swirly off-axis character in some examples", "classic portrait look", "Gauss-derived"],
+    cameraTags: ["fast normal", "symmetric", "SLR friendly"],
     typicalUse: "Fast normal lenses and portrait-oriented adaptations.",
     representativeExamples: ["Zeiss Biotar 58mm f/2", "Helios-44 58mm f/2", "Zeiss Biotar 75mm f/1.5"],
     diagram: {
@@ -91,7 +99,9 @@ export const lenses: LensArchitecture[] = [
     elements: 7,
     groups: 3,
     description: "A compact high-speed family using cemented groups to reduce air-glass surfaces.",
+    whyMatters: "The Sonnar matters because it delivered speed and contrast before modern coatings made many air-glass surfaces easy to manage.",
     traits: ["compact for speed", "high contrast", "fewer air-glass surfaces", "distinctive classic rendering"],
+    cameraTags: ["compact", "fast normal", "rangefinder friendly", "low air-glass surfaces", "short back focus"],
     typicalUse: "Fast normal and short telephoto lenses, especially rangefinder-era designs.",
     representativeExamples: ["Zeiss Sonnar 50mm f/1.5", "Zeiss Sonnar 85mm f/2", "Nikon S.C 50mm f/1.4"],
     diagram: {
@@ -114,7 +124,9 @@ export const lenses: LensArchitecture[] = [
     elements: 6,
     groups: 4,
     description: "A historically important high-speed design that influenced later Sonnar-type thinking.",
+    whyMatters: "Ernostar designs pushed available-light photography forward, showing photographers that fast lenses could change what was practical to shoot.",
     traits: ["very fast for its era", "large front group", "compact rear grouping", "early available-light emphasis"],
+    cameraTags: ["fast normal", "compact", "low air-glass surfaces"],
     typicalUse: "Early fast still-camera lenses and available-light photography.",
     representativeExamples: ["Ernemann Ernostar 100mm f/2", "Zeiss Ernostar-derived designs", "Early fast press-camera lenses"],
     diagram: {
@@ -136,7 +148,9 @@ export const lenses: LensArchitecture[] = [
     elements: 8,
     groups: 5,
     description: "A wide-angle archetype with strong symmetry, short back focus, and excellent correction potential.",
+    whyMatters: "Biogon-style wide angles are prized because they can keep distortion low and packages compact, especially when a mirror box does not need clearance.",
     traits: ["wide-angle coverage", "low distortion tendency", "short back focus", "rangefinder-friendly heritage"],
+    cameraTags: ["rangefinder friendly", "symmetric", "short back focus", "compact"],
     typicalUse: "Rangefinder wide-angle lenses and compact architectural photography lenses.",
     representativeExamples: ["Zeiss Biogon 21mm f/4.5", "Zeiss Biogon 35mm f/2.8", "Hasselblad SWC Biogon 38mm f/4.5"],
     diagram: {
@@ -160,7 +174,9 @@ export const lenses: LensArchitecture[] = [
     elements: 4,
     groups: 4,
     description: "A highly symmetrical wide-angle form known for compactness and restrained distortion.",
+    whyMatters: "The Topogon is important as a clean wide-angle idea: strong symmetry, modest speed, and geometry that suits careful mapping or architecture-minded work.",
     traits: ["strong symmetry", "compact layout", "wide field", "limited speed"],
+    cameraTags: ["compact", "symmetric", "short back focus", "rangefinder friendly"],
     typicalUse: "Aerial, mapping, and compact wide-angle photography.",
     representativeExamples: ["Zeiss Topogon 25mm f/4", "Russar MR-2 inspired by similar ideas", "Survey-camera wide-angle lenses"],
     diagram: {
@@ -180,7 +196,9 @@ export const lenses: LensArchitecture[] = [
     elements: 8,
     groups: 7,
     description: "A wide-angle SLR-friendly archetype using a negative front group to increase back focus.",
+    whyMatters: "Retrofocus lenses made practical wide-angle photography possible on SLRs by leaving room for the mirror while keeping a wide field of view.",
     traits: ["long back focus", "large front negative group", "SLR mirror clearance", "wide-angle perspective"],
+    cameraTags: ["retrofocus", "SLR friendly", "long back focus"],
     typicalUse: "SLR and mirrorless wide-angle lenses where mechanical clearance matters.",
     representativeExamples: ["Zeiss Distagon 28mm f/2.8", "Angenieux Retrofocus 35mm f/2.5", "Nikon 24mm f/2.8"],
     diagram: {
@@ -204,7 +222,9 @@ export const lenses: LensArchitecture[] = [
     elements: 4,
     groups: 2,
     description: "A bright portrait formula with separated front and rear doublets, prized for historical character.",
+    whyMatters: "The Petzval matters because it is one of the classic examples where speed, field curvature, and rendering character become part of the photographic signature.",
     traits: ["fast portrait heritage", "curved field character", "strong center emphasis", "distinctive background rendering"],
+    cameraTags: ["fast normal", "long back focus", "low air-glass surfaces"],
     typicalUse: "Portrait lenses, projection lenses, and modern character-lens revivals.",
     representativeExamples: ["Voigtlander Petzval Portrait Lens", "Dallmeyer 3B", "Lomography New Petzval"],
     diagram: {

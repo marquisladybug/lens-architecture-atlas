@@ -29,11 +29,25 @@ export default function LensDetail({ lens }: LensDetailProps) {
 
       <p className="description">{lens.description}</p>
 
+      <section className="detail-section why-section">
+        <h3>Why this design matters</h3>
+        <p>{lens.whyMatters}</p>
+      </section>
+
       <section className="detail-section">
         <h3>Traits</h3>
         <ul className="trait-list">
           {lens.traits.map((trait) => (
             <li key={trait}>{trait}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="detail-section">
+        <h3>Camera Tags</h3>
+        <ul className="tag-list">
+          {lens.cameraTags.map((tag) => (
+            <li key={tag}>{tag}</li>
           ))}
         </ul>
       </section>

@@ -35,7 +35,9 @@ export interface LensArchitecture {
   elements: number;
   groups: number;
   description: string;
+  whyMatters: string;
   traits: string[];
+  cameraTags: string[];
   typicalUse: string;
   representativeExamples: string[];
   diagram: LensDiagramData;
