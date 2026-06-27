@@ -1,4 +1,10 @@
-import type { OpticalPlaygroundPreset, PlaygroundGroup } from "../types/lens";
+import type { OpticalPlaygroundPreset, PlaygroundElement, PlaygroundGroup } from "../types/lens";
+
+export interface ElementAdjustment {
+  axialShift: number;
+  decenter: number;
+  tilt: number;
+}
 
 export interface PlaygroundControls {
   objectDistance: number;
@@ -8,6 +14,7 @@ export interface PlaygroundControls {
   apertureSize: number;
   groupSpacingDelta: number;
   groupAxialShift: number;
+  elementAdjustments: Record<string, ElementAdjustment>;
 }
 
 export interface OpticalRayPoint {
@@ -24,6 +31,7 @@ export interface OpticalRayTrace {
 
 export interface OpticalPlaygroundResult {
   groups: PlaygroundGroup[];
+  elements: PlaygroundElement[];
   stopPosition: number;
   focusPosition: number;
   sensorBlurRadius: number;
@@ -51,6 +59,27 @@ function cloneGroupsWithSpacing(preset: OpticalPlaygroundPreset, controls: Playg
   }));
 }
 
+function flattenAdjustedElements(groups: PlaygroundGroup[], controls: PlaygroundControls) {
+  return groups
+    .flatMap((group) =>
+      group.elements.map((element) => {
+        const adjustment = controls.elementAdjustments[element.id] ?? {
+          axialShift: element.defaultAxialShift,
+          decenter: element.defaultDecenter,
+          tilt: element.defaultTilt,
+        };
+
+        return {
+          ...element,
+          baseX: group.position + element.baseX + adjustment.axialShift,
+          defaultDecenter: adjustment.decenter,
+          defaultTilt: adjustment.tilt,
+        };
+      }),
+    )
+    .sort((left, right) => left.baseX - right.baseX);
+}
+
 function transferTo(ray: RayState, distance: number): RayState {
   return {
     y: ray.y + distance * ray.theta,
@@ -58,10 +87,13 @@ function transferTo(ray: RayState, distance: number): RayState {
   };
 }
 
-function refractThinGroup(ray: RayState, power: number): RayState {
+function refractThinElement(ray: RayState, element: PlaygroundElement): RayState {
   return {
     y: ray.y,
-    theta: ray.theta - power * ray.y,
+    theta:
+      ray.theta -
+      element.powerContribution * (ray.y - element.defaultDecenter) +
+      element.defaultTilt * 0.0018,
   };
 }
 
@@ -70,17 +102,17 @@ function propagateThroughGroupsTo(
   theta: number,
   startX: number,
   targetX: number,
-  groups: PlaygroundGroup[],
+  elements: PlaygroundElement[],
 ) {
   let ray: RayState = { y: startY, theta };
   let x = startX;
 
-  groups
-    .filter((group) => group.position > startX && group.position < targetX)
-    .forEach((group) => {
-      ray = transferTo(ray, group.position - x);
-      x = group.position;
-      ray = refractThinGroup(ray, group.power);
+  elements
+    .filter((element) => element.baseX > startX && element.baseX < targetX)
+    .forEach((element) => {
+      ray = transferTo(ray, element.baseX - x);
+      x = element.baseX;
+      ray = refractThinElement(ray, element);
     });
 
   return transferTo(ray, targetX - x);
@@ -91,10 +123,10 @@ function solveThetaForStop(
   startX: number,
   targetStopY: number,
   stopPosition: number,
-  groups: PlaygroundGroup[],
+  elements: PlaygroundElement[],
 ) {
-  const baseRay = propagateThroughGroupsTo(startY, 0, startX, stopPosition, groups);
-  const unitRay = propagateThroughGroupsTo(startY, 1, startX, stopPosition, groups);
+  const baseRay = propagateThroughGroupsTo(startY, 0, startX, stopPosition, elements);
+  const unitRay = propagateThroughGroupsTo(startY, 1, startX, stopPosition, elements);
   const response = unitRay.y - baseRay.y;
 
   if (Math.abs(response) < EPSILON) {
@@ -110,18 +142,18 @@ function traceRay(
   startY: number,
   startX: number,
   targetStopY: number,
-  groups: PlaygroundGroup[],
+  elements: PlaygroundElement[],
   stopPosition: number,
   sensorPosition: number,
 ) {
-  const theta = solveThetaForStop(startY, startX, targetStopY, stopPosition, groups);
+  const theta = solveThetaForStop(startY, startX, targetStopY, stopPosition, elements);
   let ray: RayState = { y: startY, theta };
   let x = startX;
   const points: OpticalRayPoint[] = [{ x, y: ray.y }];
-  let finalGroupExit = { x: startX, y: ray.y, theta: ray.theta };
+  let finalElementExit = { x: startX, y: ray.y, theta: ray.theta };
   const events = [
-    ...groups.map((group) => ({ type: "group" as const, x: group.position, power: group.power })),
-    { type: "stop" as const, x: stopPosition, power: 0 },
+    ...elements.map((element) => ({ type: "element" as const, x: element.baseX, element })),
+    { type: "stop" as const, x: stopPosition, element: undefined },
   ].sort((left, right) => left.x - right.x);
 
   events.forEach((event) => {
@@ -133,9 +165,9 @@ function traceRay(
     x = event.x;
     points.push({ x, y: ray.y });
 
-    if (event.type === "group") {
-      ray = refractThinGroup(ray, event.power);
-      finalGroupExit = { x, y: ray.y, theta: ray.theta };
+    if (event.type === "element" && event.element) {
+      ray = refractThinElement(ray, event.element);
+      finalElementExit = { x, y: ray.y, theta: ray.theta };
     }
   });
 
@@ -147,9 +179,9 @@ function traceRay(
     label,
     points,
     sensorY: ray.y,
-    exitY: finalGroupExit.y,
-    exitTheta: finalGroupExit.theta,
-    exitX: finalGroupExit.x,
+    exitY: finalElementExit.y,
+    exitTheta: finalElementExit.theta,
+    exitX: finalElementExit.x,
   };
 }
 
@@ -158,6 +190,7 @@ export function calculateOpticalPlayground(
   controls: PlaygroundControls,
 ): OpticalPlaygroundResult {
   const groups = cloneGroupsWithSpacing(preset, controls);
+  const elements = flattenAdjustedElements(groups, controls);
   const stopPosition = preset.stopPosition + controls.groupAxialShift;
   const startX = controls.infinityMode ? -150 : -controls.objectDistance;
   const objectHeight = controls.objectHeight;
@@ -166,15 +199,15 @@ export function calculateOpticalPlayground(
   const sensorPosition = controls.sensorPosition;
 
   const rawRays = [
-    traceRay("marginal-upper", "marginal ray", objectY, startX, -apertureRadius, groups, stopPosition, sensorPosition),
-    traceRay("chief", "chief ray", objectY, startX, 0, groups, stopPosition, sensorPosition),
-    traceRay("marginal-lower", "marginal ray", objectY, startX, apertureRadius, groups, stopPosition, sensorPosition),
+    traceRay("marginal-upper", "marginal ray", objectY, startX, -apertureRadius, elements, stopPosition, sensorPosition),
+    traceRay("chief", "chief ray", objectY, startX, 0, elements, stopPosition, sensorPosition),
+    traceRay("marginal-lower", "marginal ray", objectY, startX, apertureRadius, elements, stopPosition, sensorPosition),
   ];
 
   const focusCandidates = rawRays
     .filter((ray) => Math.abs(ray.exitTheta) > EPSILON)
     .map((ray) => ray.exitX - ray.exitY / ray.exitTheta)
-    .filter((position) => Number.isFinite(position) && position > groups[groups.length - 1].position);
+    .filter((position) => Number.isFinite(position) && position > elements[elements.length - 1].baseX);
 
   const focusPosition =
     focusCandidates.length > 0
@@ -189,6 +222,7 @@ export function calculateOpticalPlayground(
 
   return {
     groups,
+    elements,
     stopPosition,
     focusPosition,
     sensorBlurRadius,

@@ -38,6 +38,15 @@ export interface PlaygroundSurface {
 
 export interface PlaygroundElement {
   id: string;
+  label: string;
+  groupId: string;
+  baseX: number;
+  powerContribution: number;
+  elementType: "positive" | "negative" | "cemented" | "stop";
+  defaultAxialShift: number;
+  defaultDecenter: number;
+  defaultTilt: number;
+  diameter: number;
   surfaces: PlaygroundSurface[];
 }
 

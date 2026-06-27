@@ -1,21 +1,64 @@
-import type { LensArchitecture, OpticalPlaygroundPreset, PlaygroundGroup } from "../types/lens";
+import type {
+  LensArchitecture,
+  OpticalPlaygroundPreset,
+  PlaygroundElement,
+  PlaygroundGroup,
+  PlaygroundSurfaceShape,
+} from "../types/lens";
 
-function group(id: string, label: string, position: number, power: number, diameter: number): PlaygroundGroup {
+type ElementType = PlaygroundElement["elementType"];
+
+function elementSurfaceShape(type: ElementType, power: number): PlaygroundSurfaceShape {
+  if (type === "stop") {
+    return "flat";
+  }
+
+  if (type === "cemented") {
+    return "meniscus";
+  }
+
+  return power >= 0 ? "convex" : "concave";
+}
+
+function group(
+  id: string,
+  label: string,
+  position: number,
+  power: number,
+  diameter: number,
+  elementTypes: ElementType[] = [power >= 0 ? "positive" : "negative"],
+): PlaygroundGroup {
+  const elementCount = elementTypes.length;
+  const spacing = Math.min(7, Math.max(3, diameter / 8));
+  const start = -((elementCount - 1) * spacing) / 2;
+
   return {
     id,
     label,
     position,
     power,
     diameter,
-    elements: [
-      {
-        id: `${id}-element`,
+    elements: elementTypes.map((type, index) => {
+      const powerContribution = power / elementCount;
+      const elementId = `${id}-e${index + 1}`;
+
+      return {
+        id: elementId,
+        label: `${label} ${index + 1}`,
+        groupId: id,
+        baseX: start + index * spacing,
+        powerContribution,
+        elementType: type,
+        defaultAxialShift: 0,
+        defaultDecenter: 0,
+        defaultTilt: 0,
+        diameter: Math.max(24, diameter - index * 2),
         surfaces: [
-          { id: `${id}-front`, shape: power >= 0 ? "convex" : "concave", powerHint: power / 2 },
-          { id: `${id}-rear`, shape: power >= 0 ? "convex" : "concave", powerHint: power / 2 },
+          { id: `${elementId}-front`, shape: elementSurfaceShape(type, powerContribution), powerHint: powerContribution / 2 },
+          { id: `${elementId}-rear`, shape: elementSurfaceShape(type, powerContribution), powerHint: powerContribution / 2 },
         ],
-      },
-    ],
+      };
+    }),
   };
 }
 
@@ -95,7 +138,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("te-g1", "front positive", -20, 0.013, 42), group("te-g2", "middle negative", -2, -0.006, 34), group("te-g3", "cemented rear", 28, 0.014, 38)],
+      [group("te-g1", "front positive", -20, 0.013, 42), group("te-g2", "middle negative", -2, -0.006, 34), group("te-g3", "cemented rear", 28, 0.014, 38, ["cemented", "positive"])],
       { stopPosition: -4, symmetryTendency: "moderate", backFocusTendency: "long", speedTendency: "moderate", defaultSensorPosition: 92, defaultApertureSize: 18 },
     ),
   },
@@ -123,7 +166,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("pl-g1", "front doublet", -28, 0.011, 46), group("pl-g2", "front negative", -8, -0.007, 34), group("pl-g3", "rear negative", 8, -0.007, 34), group("pl-g4", "rear doublet", 28, 0.011, 46)],
+      [group("pl-g1", "front doublet", -28, 0.011, 46, ["positive", "cemented"]), group("pl-g2", "front negative", -8, -0.007, 34), group("pl-g3", "rear negative", 8, -0.007, 34), group("pl-g4", "rear doublet", 28, 0.011, 46, ["cemented", "positive"])],
       { stopPosition: 0, symmetryTendency: "high", backFocusTendency: "balanced", speedTendency: "fast", defaultSensorPosition: 82, defaultApertureSize: 28 },
     ),
   },
@@ -151,7 +194,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("bt-g1", "strong front", -30, 0.013, 50), group("bt-g2", "front negative", -8, -0.008, 36), group("bt-g3", "rear negative", 9, -0.007, 36), group("bt-g4", "strong rear", 30, 0.012, 48)],
+      [group("bt-g1", "strong front", -30, 0.013, 50, ["positive", "cemented"]), group("bt-g2", "front negative", -8, -0.008, 36), group("bt-g3", "rear negative", 9, -0.007, 36), group("bt-g4", "strong rear", 30, 0.012, 48, ["cemented", "positive"])],
       { stopPosition: 1, symmetryTendency: "high", backFocusTendency: "balanced", speedTendency: "fast", defaultSensorPosition: 80, defaultApertureSize: 30 },
     ),
   },
@@ -180,7 +223,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("so-g1", "front positive", -24, 0.015, 46), group("so-g2", "thick middle", 0, 0.006, 40), group("so-g3", "cemented rear", 24, 0.009, 38)],
+      [group("so-g1", "front positive", -24, 0.015, 46), group("so-g2", "thick middle", 0, 0.006, 40, ["positive", "cemented", "negative"]), group("so-g3", "cemented rear", 24, 0.009, 38, ["cemented", "negative", "positive"])],
       { stopPosition: -6, symmetryTendency: "low", backFocusTendency: "short", speedTendency: "fast", defaultSensorPosition: 72, defaultApertureSize: 30 },
     ),
   },
@@ -208,7 +251,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("er-g1", "large front", -30, 0.017, 54), group("er-g2", "corrector", -10, -0.005, 38), group("er-g3", "rear positive", 18, 0.009, 38), group("er-g4", "rear corrector", 32, 0.004, 34)],
+      [group("er-g1", "large front", -30, 0.017, 54, ["positive", "cemented"]), group("er-g2", "corrector", -10, -0.005, 38), group("er-g3", "rear positive", 18, 0.009, 38), group("er-g4", "rear corrector", 32, 0.004, 34, ["cemented", "positive"])],
       { stopPosition: 12, symmetryTendency: "low", backFocusTendency: "balanced", speedTendency: "fast", defaultSensorPosition: 76, defaultApertureSize: 32 },
     ),
   },
@@ -238,7 +281,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("bi-g1", "front meniscus", -38, 0.006, 40), group("bi-g2", "front cell", -18, 0.011, 44), group("bi-g3", "central cell", 0, -0.003, 32), group("bi-g4", "rear cell", 18, 0.011, 44), group("bi-g5", "rear meniscus", 38, 0.006, 40)],
+      [group("bi-g1", "front meniscus", -38, 0.006, 40), group("bi-g2", "front cell", -18, 0.011, 44, ["positive", "cemented"]), group("bi-g3", "central cell", 0, -0.003, 32), group("bi-g4", "rear cell", 18, 0.011, 44, ["cemented", "positive"]), group("bi-g5", "rear meniscus", 38, 0.006, 40, ["cemented", "positive"])],
       { stopPosition: 0, symmetryTendency: "high", backFocusTendency: "short", speedTendency: "moderate", defaultSensorPosition: 58, defaultApertureSize: 20 },
     ),
   },
@@ -294,7 +337,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("di-g1", "negative front", -42, -0.014, 54), group("di-g2", "wide corrector", -22, 0.006, 44), group("di-g3", "main positive", 0, 0.014, 42), group("di-g4", "rear corrector", 22, 0.006, 36), group("di-g5", "field group", 38, 0.004, 32)],
+      [group("di-g1", "negative front", -42, -0.014, 54, ["negative", "negative"]), group("di-g2", "wide corrector", -22, 0.006, 44, ["positive", "cemented"]), group("di-g3", "main positive", 0, 0.014, 42, ["positive", "cemented"]), group("di-g4", "rear corrector", 22, 0.006, 36), group("di-g5", "field group", 38, 0.004, 32)],
       { stopPosition: 6, symmetryTendency: "low", backFocusTendency: "long", speedTendency: "moderate", defaultSensorPosition: 104, defaultApertureSize: 22 },
     ),
   },
@@ -320,7 +363,7 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("pe-g1", "front doublet", -24, 0.018, 50), group("pe-g2", "rear doublet", 28, 0.008, 42)],
+      [group("pe-g1", "front doublet", -24, 0.018, 50, ["positive", "cemented"]), group("pe-g2", "rear doublet", 28, 0.008, 42, ["negative", "positive"])],
       { stopPosition: 2, symmetryTendency: "low", backFocusTendency: "long", speedTendency: "fast", defaultSensorPosition: 88, defaultApertureSize: 30 },
     ),
   },

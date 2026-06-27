@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { calculateOpticalPlayground, type PlaygroundControls } from "../lib/optics";
-import type { OpticalPlaygroundPreset } from "../types/lens";
+import { calculateOpticalPlayground, type ElementAdjustment, type PlaygroundControls } from "../lib/optics";
+import type { OpticalPlaygroundPreset, PlaygroundElement } from "../types/lens";
 
 interface OpticalPlaygroundProps {
   lensName: string;
   preset: OpticalPlaygroundPreset;
 }
+
+type ScalarControlKey = Exclude<keyof PlaygroundControls, "elementAdjustments">;
 
 const VIEW = {
   minX: -160,
@@ -25,6 +27,18 @@ function initialControls(preset: OpticalPlaygroundPreset): PlaygroundControls {
     apertureSize: preset.defaultApertureSize,
     groupSpacingDelta: 0,
     groupAxialShift: 0,
+    elementAdjustments: Object.fromEntries(
+      preset.groups.flatMap((group) =>
+        group.elements.map((element) => [
+          element.id,
+          {
+            axialShift: element.defaultAxialShift,
+            decenter: element.defaultDecenter,
+            tilt: element.defaultTilt,
+          },
+        ]),
+      ),
+    ),
   };
 }
 
@@ -57,6 +71,19 @@ function focusLabel(state: string) {
   }
 }
 
+function elementTone(element: PlaygroundElement) {
+  switch (element.elementType) {
+    case "negative":
+      return "negative";
+    case "cemented":
+      return "cemented";
+    case "stop":
+      return "stop";
+    default:
+      return "positive";
+  }
+}
+
 export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroundProps) {
   const [controls, setControls] = useState(() => initialControls(preset));
 
@@ -71,8 +98,35 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
   const focusX = clampX(result.focusPosition);
   const blurRadius = Math.max(3, Math.min(24, result.sensorBlurRadius * 2.2));
 
-  const updateControl = (key: keyof PlaygroundControls, value: number | boolean) => {
+  const updateControl = (key: ScalarControlKey, value: number | boolean) => {
     setControls((current) => ({ ...current, [key]: value }));
+  };
+
+  const updateElement = (elementId: string, key: keyof ElementAdjustment, value: number) => {
+    setControls((current) => ({
+      ...current,
+      elementAdjustments: {
+        ...current.elementAdjustments,
+        [elementId]: {
+          ...current.elementAdjustments[elementId],
+          [key]: value,
+        },
+      },
+    }));
+  };
+
+  const resetElement = (element: PlaygroundElement) => {
+    setControls((current) => ({
+      ...current,
+      elementAdjustments: {
+        ...current.elementAdjustments,
+        [element.id]: {
+          axialShift: element.defaultAxialShift,
+          decenter: element.defaultDecenter,
+          tilt: element.defaultTilt,
+        },
+      },
+    }));
   };
 
   return (
@@ -86,7 +140,7 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
           </p>
         </div>
         <button className="reset-button" type="button" onClick={() => setControls(initialControls(preset))}>
-          Reset
+          Reset all
         </button>
       </div>
 
@@ -117,6 +171,22 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
               <text x={xToView(group.position)} y={yToView(-group.diameter / 2) + 18}>
                 {group.label}
               </text>
+            </g>
+          ))}
+
+          {result.elements.map((element) => (
+            <g
+              key={element.id}
+              className={`play-element ${elementTone(element)}`}
+              transform={`translate(${xToView(element.baseX)} ${yToView(element.defaultDecenter)}) rotate(${element.defaultTilt})`}
+            >
+              <rect
+                x="-6"
+                y={-Math.abs(yToView(element.diameter / 2) - yToView(-element.diameter / 2)) / 2}
+                width="12"
+                height={Math.abs(yToView(element.diameter / 2) - yToView(-element.diameter / 2))}
+                rx="5"
+              />
             </g>
           ))}
 
@@ -233,6 +303,79 @@ export default function OpticalPlayground({ lensName, preset }: OpticalPlaygroun
           <small>{controls.groupAxialShift}</small>
         </label>
       </div>
+
+      <details className="element-controls">
+        <summary>
+          <span>Element controls</span>
+          <small>{preset.groups.reduce((count, group) => count + group.elements.length, 0)} elements</small>
+        </summary>
+        <div className="element-control-list">
+          {preset.groups.flatMap((group) =>
+            group.elements.map((element) => {
+              const adjustment = controls.elementAdjustments[element.id] ?? {
+                axialShift: element.defaultAxialShift,
+                decenter: element.defaultDecenter,
+                tilt: element.defaultTilt,
+              };
+
+              return (
+                <section className="element-control-card" key={element.id}>
+                  <div className="element-control-heading">
+                    <div>
+                      <h4>{element.label}</h4>
+                      <p>
+                        {group.label} / {element.elementType} / power {element.powerContribution.toFixed(4)}
+                      </p>
+                    </div>
+                    <button type="button" onClick={() => resetElement(element)}>
+                      Reset
+                    </button>
+                  </div>
+
+                  <label>
+                    <span>Axial shift</span>
+                    <input
+                      type="range"
+                      min="-10"
+                      max="10"
+                      step="0.5"
+                      value={adjustment.axialShift}
+                      onChange={(event) => updateElement(element.id, "axialShift", Number(event.target.value))}
+                    />
+                    <small>{adjustment.axialShift.toFixed(1)}</small>
+                  </label>
+
+                  <label>
+                    <span>Vertical decenter</span>
+                    <input
+                      type="range"
+                      min="-12"
+                      max="12"
+                      step="0.5"
+                      value={adjustment.decenter}
+                      onChange={(event) => updateElement(element.id, "decenter", Number(event.target.value))}
+                    />
+                    <small>{adjustment.decenter.toFixed(1)}</small>
+                  </label>
+
+                  <label>
+                    <span>Tilt</span>
+                    <input
+                      type="range"
+                      min="-8"
+                      max="8"
+                      step="0.25"
+                      value={adjustment.tilt}
+                      onChange={(event) => updateElement(element.id, "tilt", Number(event.target.value))}
+                    />
+                    <small>{adjustment.tilt.toFixed(2)}</small>
+                  </label>
+                </section>
+              );
+            }),
+          )}
+        </div>
+      </details>
 
       <dl className="playground-preset">
         <div>

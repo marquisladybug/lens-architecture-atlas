@@ -435,9 +435,10 @@ h3 {
 }
 
 .play-lens-group rect {
-  fill: rgba(188, 214, 220, 0.64);
-  stroke: #26221d;
-  stroke-width: 1.4;
+  fill: rgba(188, 214, 220, 0.14);
+  stroke: rgba(38, 34, 29, 0.32);
+  stroke-dasharray: 4 4;
+  stroke-width: 1;
 }
 
 .play-lens-group text,
@@ -452,6 +453,27 @@ h3 {
 
 .play-lens-group text {
   display: none;
+}
+
+.play-element rect {
+  stroke: #26221d;
+  stroke-width: 1.2;
+}
+
+.play-element.positive rect {
+  fill: rgba(236, 218, 179, 0.72);
+}
+
+.play-element.negative rect {
+  fill: rgba(232, 235, 231, 0.78);
+}
+
+.play-element.cemented rect {
+  fill: rgba(188, 214, 220, 0.72);
+}
+
+.play-element.stop rect {
+  fill: rgba(86, 81, 75, 0.4);
 }
 
 .play-stop line,
@@ -555,6 +577,121 @@ h3 {
 
 .toggle-control input {
   accent-color: #2f3534;
+}
+
+.element-controls {
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: rgba(255, 253, 250, 0.72);
+}
+
+.element-controls summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  color: #27231d;
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.element-controls summary::-webkit-details-marker {
+  display: none;
+}
+
+.element-controls summary::before {
+  content: "+";
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid #cfc6b8;
+  border-radius: 4px;
+  color: #51493f;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-weight: 400;
+}
+
+.element-controls[open] summary::before {
+  content: "-";
+}
+
+.element-controls summary span {
+  flex: 1;
+}
+
+.element-controls summary small {
+  color: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.76rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.element-control-list {
+  display: grid;
+  gap: 10px;
+  max-height: 520px;
+  overflow: auto;
+  padding: 0 14px 14px;
+}
+
+.element-control-card {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid #e5ded3;
+  padding-top: 12px;
+}
+
+.element-control-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.element-control-heading h4 {
+  margin: 0;
+  color: #181512;
+  font-size: 0.95rem;
+}
+
+.element-control-heading p {
+  margin: 2px 0 0;
+  color: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+}
+
+.element-control-heading button {
+  border: 1px solid #cfc6b8;
+  border-radius: 4px;
+  background: #f8f7f3;
+  color: #51493f;
+  padding: 6px 9px;
+  font-size: 0.78rem;
+}
+
+.element-control-card label {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(120px, 1.5fr) 48px;
+  align-items: center;
+  gap: 10px;
+  color: #51493f;
+  font-size: 0.82rem;
+}
+
+.element-control-card input[type="range"] {
+  width: 100%;
+  accent-color: #6e7e89;
+}
+
+.element-control-card small {
+  color: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  text-align: right;
 }
 
 .playground-preset {
@@ -665,6 +802,10 @@ h3 {
   .playground-preset {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .element-control-list {
+    max-height: 460px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -738,6 +879,32 @@ h3 {
 
   .playground-controls .toggle-control span {
     grid-column: auto;
+  }
+
+  .element-controls summary {
+    padding: 11px 12px;
+  }
+
+  .element-control-list {
+    max-height: 430px;
+    padding: 0 12px 12px;
+  }
+
+  .element-control-heading {
+    display: grid;
+  }
+
+  .element-control-heading button {
+    justify-self: start;
+  }
+
+  .element-control-card label {
+    grid-template-columns: 1fr 46px;
+    gap: 6px 10px;
+  }
+
+  .element-control-card label > span {
+    grid-column: 1 / -1;
   }
 
   .playground-preset {
