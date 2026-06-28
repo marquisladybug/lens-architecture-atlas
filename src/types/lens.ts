@@ -73,6 +73,29 @@ export interface OpticalPlaygroundPreset {
   defaultApertureSize: number;
 }
 
+export interface TechnicalSurface {
+  id: string;
+  label?: string;
+  radius: number;
+  thicknessToNext: number;
+  semiDiameter: number;
+  refractiveIndexBefore: number;
+  refractiveIndexAfter: number;
+  medium?: string;
+  glass?: string;
+  isStop?: boolean;
+}
+
+export interface TechnicalPrescription {
+  id: string;
+  label: string;
+  surfaces: TechnicalSurface[];
+  imagePlaneZ: number;
+  defaultObjectDistance: number;
+  defaultObjectHeight: number;
+  defaultFieldHeight: number;
+}
+
 export interface LensArchitecture {
   id: string;
   name: string;
@@ -87,4 +110,5 @@ export interface LensArchitecture {
   representativeExamples: string[];
   diagram: LensDiagramData;
   playground: OpticalPlaygroundPreset;
+  technicalPrescription?: TechnicalPrescription;
 }
