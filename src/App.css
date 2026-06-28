@@ -33,7 +33,7 @@ button {
 }
 
 .app-shell {
-  width: min(1180px, 100%);
+  width: min(1440px, 100%);
   margin: 0 auto;
   padding: 28px;
 }
@@ -129,7 +129,7 @@ h3 {
 
 .atlas-layout {
   display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
@@ -253,6 +253,29 @@ h3 {
   padding: 16px 0 12px;
 }
 
+.lens-diagram-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lens-diagram-toolbar button {
+  border: 1px solid #cfc6b8;
+  border-radius: 4px;
+  background: #fffdfa;
+  color: #51493f;
+  padding: 6px 9px;
+  font-size: 0.76rem;
+}
+
+.lens-diagram-toolbar button.active {
+  border-color: #2f3534;
+  background: #2f3534;
+  color: #fffdfa;
+}
+
 .lens-diagram svg {
   display: block;
   width: 100%;
@@ -291,19 +314,651 @@ h3 {
 
 .diagram-element {
   stroke: #26221d;
+  stroke-linejoin: round;
+  stroke-width: 1.15;
+}
+
+.diagram-element-positive {
+  fill: rgba(236, 218, 179, 0.78);
+}
+
+.diagram-element-negative {
+  fill: rgba(188, 214, 220, 0.76);
+}
+
+.diagram-element-label {
+  fill: #51493f;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 7px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.diagram-plane-label,
+.diagram-stop-guide text,
+.diagram-back-focus text,
+.diagram-group-band text {
+  fill: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 5.5px;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+.diagram-glass-fill {
+  opacity: 0.18;
+  stroke: none;
+}
+
+.diagram-glass-fill-positive {
+  fill: #ecdab3;
+}
+
+.diagram-glass-fill-negative {
+  fill: #bcd6dc;
+}
+
+.diagram-surface-guide {
+  fill: none;
+  stroke: rgba(47, 53, 52, 0.52);
+  stroke-width: 0.75;
+}
+
+.diagram-surface-guide-cemented {
+  stroke: #445f8f;
+  stroke-dasharray: 2 2;
+  stroke-width: 1.15;
+}
+
+.diagram-stop-guide line {
+  stroke: #56514b;
+  stroke-dasharray: 3 3;
+  stroke-width: 1.1;
+}
+
+.diagram-back-focus line {
+  stroke: #9b7c47;
+  stroke-dasharray: 3 3;
+  stroke-width: 0.9;
+}
+
+.diagram-group-band line {
+  stroke: #9f978b;
+  stroke-width: 1.4;
+}
+
+.diagram-group-band-cemented line {
+  stroke: #445f8f;
+  stroke-width: 2;
+}
+
+.diagram-symmetry-guide {
+  stroke: #6e7e89;
+  stroke-dasharray: 4 4;
+  stroke-width: 0.9;
+  opacity: 0.55;
+}
+
+.power-map {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.power-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #fffdfa;
+  padding: 5px 7px;
+}
+
+.power-group-cemented {
+  border-color: #9fb2bd;
+  background: #eef2f8;
+}
+
+.power-group-label {
+  color: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.68rem;
+}
+
+.power-token {
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 3px;
+  color: #27231d;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.power-token-positive {
+  background: rgba(236, 218, 179, 0.88);
+}
+
+.power-token-negative {
+  background: rgba(188, 214, 220, 0.88);
+}
+
+.structure-annotations {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.structure-annotations span {
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #f8f7f3;
+  color: #51493f;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+}
+
+.technical-ray-section {
+  display: grid;
+  gap: 14px;
+}
+
+.ray-workbench {
+  border-block: 1px solid #d8d1c4;
+  padding-block: 18px;
+}
+
+.technical-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.technical-heading p {
+  max-width: 680px;
+  margin: 0;
+  color: #4c443a;
+}
+
+.technical-mode-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.technical-mode-selector button {
+  border: 1px solid #cfc6b8;
+  border-radius: 4px;
+  background: #fffdfa;
+  color: #51493f;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+}
+
+.technical-mode-selector button.active {
+  border-color: #445f8f;
+  background: #eef2f8;
+  color: #26375d;
+}
+
+.technical-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.technical-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #f8f7f3;
+  color: #51493f;
+  padding: 6px 9px;
+  font-size: 0.78rem;
+}
+
+.technical-options input {
+  accent-color: #445f8f;
+}
+
+.workbench-inspector {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.25fr) repeat(7, minmax(76px, 0.62fr)) auto auto;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #f8f7f3;
+  padding: 10px;
+}
+
+.workbench-inspector div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.workbench-inspector strong {
+  overflow: hidden;
+  color: #181512;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workbench-inspector span,
+.workbench-inspector-label,
+.workbench-selected-controls output,
+.workbench-control-grid output {
+  color: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.78rem;
+}
+
+.workbench-inspector button,
+.workbench-selected-controls button {
+  border: 1px solid #cfc6b8;
+  border-radius: 4px;
+  background: #fffdfa;
+  color: #51493f;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+}
+
+.workbench-selected-controls,
+.workbench-control-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.workbench-selected-controls {
+  border: 1px solid #e5ded3;
+  border-radius: 4px;
+  background: rgba(255, 253, 250, 0.72);
+  padding: 12px;
+}
+
+.workbench-selected-controls label,
+.workbench-control-grid label {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.9fr) minmax(120px, 1.4fr) minmax(72px, auto);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: #51493f;
+  font-size: 0.84rem;
+}
+
+.workbench-selected-controls input,
+.workbench-control-grid input {
+  width: 100%;
+  accent-color: #445f8f;
+}
+
+.workbench-control-grid label.disabled-control {
+  color: #9b9287;
+}
+
+.workbench-control-grid label.disabled-control input {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.workbench-control-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.workbench-controls {
+  border: 1px solid #e5ded3;
+  border-radius: 4px;
+  background: #fffdfa;
+  padding: 12px;
+}
+
+.technical-stage {
+  overflow: hidden;
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #fffdfa;
+}
+
+.technical-stage svg {
+  display: block;
+  width: 100%;
+  min-height: 520px;
+  touch-action: none;
+  user-select: none;
+}
+
+.technical-stage.dragging svg {
+  cursor: grabbing;
+}
+
+.technical-stage.dragging-element svg,
+.technical-stage.dragging-image svg,
+.technical-stage.dragging-stop svg {
+  cursor: ew-resize;
+}
+
+.technical-grid-line {
+  fill: none;
+  stroke: rgba(78, 72, 62, 0.055);
   stroke-width: 1;
 }
 
-.diagram-element-clear {
-  fill: rgba(232, 235, 231, 0.62);
+.technical-grid,
+.technical-axis,
+.workbench-object,
+.workbench-infinity-label,
+.technical-focus-plane {
+  pointer-events: none;
 }
 
-.diagram-element-warm {
-  fill: rgba(236, 218, 179, 0.62);
+.technical-axis {
+  stroke: #a8a39a;
+  stroke-dasharray: 5 6;
+  stroke-width: 0.9;
 }
 
-.diagram-element-cool {
-  fill: rgba(188, 214, 220, 0.58);
+.technical-element-hit {
+  cursor: ew-resize;
+}
+
+.technical-element-target {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+.technical-element-silhouette {
+  fill: rgba(42, 41, 38, 0.035);
+  stroke: rgba(39, 36, 32, 0.14);
+  stroke-width: 0.55;
+  pointer-events: none;
+}
+
+.technical-element-silhouette.selected {
+  fill: rgba(30, 29, 27, 0.055);
+  stroke: rgba(24, 21, 18, 0.52);
+  stroke-width: 1.05;
+}
+
+.technical-element-silhouette.dragging-target {
+  fill: rgba(30, 29, 27, 0.07);
+  stroke: rgba(24, 21, 18, 0.68);
+  stroke-width: 1.25;
+}
+
+.technical-stage.line-priority .technical-element-silhouette {
+  fill: rgba(42, 41, 38, 0.014);
+  stroke: rgba(39, 36, 32, 0.08);
+  stroke-width: 0.45;
+}
+
+.technical-stage.line-priority .technical-element-silhouette.selected {
+  fill: rgba(30, 29, 27, 0.025);
+  stroke: rgba(24, 21, 18, 0.38);
+  stroke-width: 0.95;
+}
+
+.technical-model-block {
+  fill: rgba(74, 72, 68, 0.055);
+  stroke: rgba(56, 55, 52, 0.28);
+  stroke-dasharray: 4 4;
+  stroke-width: 0.9;
+  pointer-events: none;
+}
+
+.technical-model-block.selected {
+  fill: rgba(30, 29, 27, 0.075);
+  stroke: rgba(24, 21, 18, 0.48);
+  stroke-width: 1.2;
+}
+
+.workbench-drag-label,
+.workbench-infinity-label text {
+  fill: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 12px;
+  text-anchor: middle;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.workbench-infinity-label text {
+  text-anchor: start;
+}
+
+.workbench-object {
+  fill: none;
+  stroke: #5b6f4f;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.workbench-object text {
+  fill: #756a5c;
+  stroke: none;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 10px;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+.technical-surface path {
+  fill: none;
+  stroke: rgba(38, 37, 34, 0.82);
+  stroke-width: 1.2;
+}
+
+.technical-surface {
+  pointer-events: none;
+}
+
+.technical-cemented-boundary path {
+  stroke: rgba(68, 95, 143, 0.48);
+  stroke-dasharray: 1 4;
+  stroke-linecap: round;
+  stroke-width: 1.2;
+  fill: none;
+}
+
+.technical-surface-selected path {
+  stroke: rgba(18, 17, 15, 0.76);
+  stroke-dasharray: none;
+  stroke-width: 1.6;
+  fill: none;
+}
+
+.technical-stage.line-priority .technical-surface-selected path {
+  stroke: rgba(18, 17, 15, 0.68);
+  stroke-width: 1.45;
+}
+
+.technical-stop path {
+  fill: none;
+  stroke: #3d3832;
+  stroke-dasharray: 5 4;
+  stroke-width: 1.45;
+}
+
+.technical-stop {
+  pointer-events: stroke;
+}
+
+.technical-stop.dragging-target path,
+.technical-image-plane.dragging-target line {
+  stroke: #174f94;
+  stroke-width: 2.6;
+}
+
+.drag-target {
+  cursor: ew-resize;
+}
+
+.technical-focus-plane text,
+.technical-image-plane text,
+.technical-surface-number {
+  fill: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 9px;
+  text-anchor: middle;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.technical-ray {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.baseline-ray {
+  opacity: 0.14;
+  stroke-width: 1.1;
+}
+
+.technical-ray-chief {
+  stroke: #315f9b;
+  stroke-width: 2.6;
+}
+
+.technical-ray-marginal {
+  stroke: #9a5843;
+  stroke-width: 1.65;
+}
+
+.technical-ray-field {
+  stroke: #6b6244;
+  stroke-width: 1.45;
+}
+
+.technical-focus-plane line {
+  stroke: #2f7b5f;
+  stroke-dasharray: 1 6;
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.technical-image-plane line {
+  stroke: #181512;
+  stroke-width: 2.35;
+}
+
+.technical-image-plane rect {
+  fill: transparent;
+}
+
+.technical-blur-circle {
+  fill: rgba(160, 97, 71, 0.16);
+  stroke: #a06147;
+  stroke-width: 1.6;
+}
+
+.technical-image-point {
+  fill: #181512;
+  stroke: #fffdfa;
+  stroke-width: 1;
+}
+
+.technical-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.technical-readout span {
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #f8f7f3;
+  color: #51493f;
+  padding: 7px 10px;
+  font-size: 0.84rem;
+}
+
+.technical-caption {
+  margin: -4px 0 0;
+  color: #756a5c;
+  font-size: 0.82rem;
+}
+
+.technical-note {
+  margin: 0;
+  border-left: 3px solid #445f8f;
+  background: #eef2f8;
+  color: #3e4c66;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+}
+
+.technical-note summary,
+.secondary-panel summary,
+.detail-accordion summary {
+  cursor: pointer;
+  color: #3e4c66;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.technical-note p {
+  margin: 10px 0 0;
+}
+
+.secondary-panel,
+.detail-accordion {
+  border-top: 1px solid #e5ded3;
+  padding-top: 14px;
+}
+
+.secondary-panel[open],
+.detail-accordion[open] {
+  display: grid;
+  gap: 16px;
+}
+
+.secondary-panel .lens-diagram {
+  border-block: 0;
+  padding: 6px 0 0;
+}
+
+.workbench-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.workbench-summary-cards div {
+  border: 1px solid #d8d1c4;
+  border-radius: 4px;
+  background: #f8f7f3;
+  padding: 10px;
+}
+
+.workbench-summary-cards dt {
+  color: #756a5c;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.workbench-summary-cards dd {
+  margin: 3px 0 0;
+  color: #27231d;
+  overflow-wrap: anywhere;
 }
 
 .description {
@@ -1003,6 +1658,27 @@ h3 {
     display: grid;
   }
 
+  .technical-heading {
+    display: grid;
+  }
+
+  .workbench-inspector {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workbench-inspector div {
+    grid-column: 1 / -1;
+  }
+
+  .workbench-selected-controls,
+  .workbench-control-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workbench-summary-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .playground-actions {
     justify-content: start;
   }
@@ -1082,6 +1758,39 @@ h3 {
 
   .playground-stage svg {
     min-height: 260px;
+  }
+
+  .technical-stage svg {
+    min-height: 360px;
+  }
+
+  .technical-mode-selector {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .technical-options {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .workbench-inspector {
+    grid-template-columns: 1fr;
+  }
+
+  .workbench-selected-controls label,
+  .workbench-control-grid label {
+    grid-template-columns: 1fr 64px;
+    gap: 6px 10px;
+  }
+
+  .workbench-selected-controls label > span,
+  .workbench-control-grid label > span {
+    grid-column: 1 / -1;
+  }
+
+  .workbench-summary-cards {
+    grid-template-columns: 1fr;
   }
 
   .selected-element-readout {

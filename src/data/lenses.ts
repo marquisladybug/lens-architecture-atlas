@@ -4,6 +4,8 @@ import type {
   PlaygroundElement,
   PlaygroundGroup,
   PlaygroundSurfaceShape,
+  TechnicalPrescription,
+  TechnicalSurface,
 } from "../types/lens";
 
 type ElementType = PlaygroundElement["elementType"];
@@ -90,6 +92,43 @@ function playgroundPreset(
   };
 }
 
+function surface(
+  id: string,
+  radius: number,
+  thicknessToNext: number,
+  semiDiameter: number,
+  refractiveIndexBefore: number,
+  refractiveIndexAfter: number,
+  options: Pick<TechnicalSurface, "label" | "glass" | "medium" | "isStop"> = {},
+): TechnicalSurface {
+  return {
+    id,
+    radius,
+    thicknessToNext,
+    semiDiameter,
+    refractiveIndexBefore,
+    refractiveIndexAfter,
+    ...options,
+  };
+}
+
+function technicalPrescription(
+  id: string,
+  label: string,
+  imagePlaneZ: number,
+  surfaces: TechnicalSurface[],
+): TechnicalPrescription {
+  return {
+    id,
+    label,
+    surfaces,
+    imagePlaneZ,
+    defaultObjectDistance: 80,
+    defaultObjectHeight: 12,
+    defaultFieldHeight: 8,
+  };
+}
+
 export const lenses: LensArchitecture[] = [
   {
     id: "cooke-triplet",
@@ -115,6 +154,15 @@ export const lenses: LensArchitecture[] = [
       [group("ct-g1", "positive front", -18, 0.012, 42), group("ct-g2", "negative middle", 0, -0.008, 34), group("ct-g3", "positive rear", 24, 0.013, 40)],
       { stopPosition: 4, symmetryTendency: "moderate", backFocusTendency: "long", speedTendency: "slow", defaultSensorPosition: 96, defaultApertureSize: 16 },
     ),
+    technicalPrescription: technicalPrescription("cooke-triplet-tech", "Cooke Triplet approximate paraxial prescription", 78, [
+      surface("ct-s1", 34, 5, 18, 1, 1.52, { label: "front crown", glass: "crown" }),
+      surface("ct-s2", -42, 8, 17, 1.52, 1),
+      surface("ct-stop", Infinity, 4, 8.5, 1, 1, { label: "stop", isStop: true }),
+      surface("ct-s3", -24, 3, 13, 1, 1.62, { label: "negative flint", glass: "flint" }),
+      surface("ct-s4", 28, 10, 13, 1.62, 1),
+      surface("ct-s5", 42, 4, 17, 1, 1.52, { label: "rear crown", glass: "crown" }),
+      surface("ct-s6", -36, 38, 17, 1.52, 1),
+    ]),
   },
   {
     id: "tessar",
@@ -141,6 +189,16 @@ export const lenses: LensArchitecture[] = [
       [group("te-g1", "front positive", -20, 0.013, 42), group("te-g2", "middle negative", -2, -0.006, 34), group("te-g3", "cemented rear", 28, 0.014, 38, ["cemented", "positive"])],
       { stopPosition: -4, symmetryTendency: "moderate", backFocusTendency: "long", speedTendency: "moderate", defaultSensorPosition: 92, defaultApertureSize: 18 },
     ),
+    technicalPrescription: technicalPrescription("tessar-tech", "Tessar approximate paraxial prescription", 76, [
+      surface("te-s1", 30, 5, 18, 1, 1.52, { label: "front positive", glass: "crown" }),
+      surface("te-s2", -52, 7, 17, 1.52, 1),
+      surface("te-stop", Infinity, 4, 8, 1, 1, { label: "stop", isStop: true }),
+      surface("te-s3", -26, 3, 13, 1, 1.62, { label: "negative", glass: "flint" }),
+      surface("te-s4", 32, 9, 13, 1.62, 1),
+      surface("te-s5", 46, 4, 16, 1, 1.60, { label: "cemented rear", glass: "dense crown" }),
+      surface("te-s6", -24, 2, 15, 1.60, 1.68, { label: "cemented interface", glass: "flint" }),
+      surface("te-s7", -62, 34, 16, 1.68, 1),
+    ]),
   },
   {
     id: "planar-double-gauss",
@@ -169,6 +227,19 @@ export const lenses: LensArchitecture[] = [
       [group("pl-g1", "front doublet", -28, 0.011, 46, ["positive", "cemented"]), group("pl-g2", "front negative", -8, -0.007, 34), group("pl-g3", "rear negative", 8, -0.007, 34), group("pl-g4", "rear doublet", 28, 0.011, 46, ["cemented", "positive"])],
       { stopPosition: 0, symmetryTendency: "high", backFocusTendency: "balanced", speedTendency: "fast", defaultSensorPosition: 82, defaultApertureSize: 28 },
     ),
+    technicalPrescription: technicalPrescription("planar-tech", "Double Gauss approximate paraxial prescription", 72, [
+      surface("pl-s1", 38, 4, 21, 1, 1.62, { label: "front positive", glass: "dense crown" }),
+      surface("pl-s2", -30, 2, 20, 1.62, 1.70, { label: "cemented interface", glass: "flint" }),
+      surface("pl-s3", -72, 7, 19, 1.70, 1),
+      surface("pl-s4", -28, 3, 15, 1, 1.68, { label: "front negative", glass: "flint" }),
+      surface("pl-s5", 36, 5, 14, 1.68, 1),
+      surface("pl-stop", Infinity, 4, 11, 1, 1, { label: "stop", isStop: true }),
+      surface("pl-s6", -36, 3, 14, 1, 1.68, { label: "rear negative", glass: "flint" }),
+      surface("pl-s7", 28, 7, 15, 1.68, 1),
+      surface("pl-s8", 72, 2, 19, 1, 1.70, { label: "rear doublet", glass: "flint" }),
+      surface("pl-s9", 30, 4, 20, 1.70, 1.62, { label: "cemented interface", glass: "dense crown" }),
+      surface("pl-s10", -38, 28, 21, 1.62, 1),
+    ]),
   },
   {
     id: "biotar",
@@ -226,6 +297,18 @@ export const lenses: LensArchitecture[] = [
       [group("so-g1", "front positive", -24, 0.015, 46), group("so-g2", "thick middle", 0, 0.006, 40, ["positive", "cemented", "negative"]), group("so-g3", "cemented rear", 24, 0.009, 38, ["cemented", "negative", "positive"])],
       { stopPosition: -6, symmetryTendency: "low", backFocusTendency: "short", speedTendency: "fast", defaultSensorPosition: 72, defaultApertureSize: 30 },
     ),
+    technicalPrescription: technicalPrescription("sonnar-tech", "Sonnar approximate paraxial prescription", 62, [
+      surface("so-s1", 32, 5, 22, 1, 1.62, { label: "large front", glass: "dense crown" }),
+      surface("so-s2", -58, 4, 21, 1.62, 1),
+      surface("so-stop", Infinity, 4, 12, 1, 1, { label: "stop", isStop: true }),
+      surface("so-s3", 42, 3, 18, 1, 1.60, { label: "middle cemented", glass: "crown" }),
+      surface("so-s4", -24, 2, 17, 1.60, 1.72, { label: "cemented interface", glass: "flint" }),
+      surface("so-s5", 30, 8, 17, 1.72, 1.62, { label: "cemented interface", glass: "dense crown" }),
+      surface("so-s6", -48, 8, 18, 1.62, 1),
+      surface("so-s7", 46, 3, 17, 1, 1.64, { label: "rear cemented", glass: "dense crown" }),
+      surface("so-s8", -30, 2, 16, 1.64, 1.72, { label: "cemented interface", glass: "flint" }),
+      surface("so-s9", -82, 22, 16, 1.72, 1),
+    ]),
   },
   {
     id: "ernostar",
@@ -281,8 +364,14 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("bi-g1", "front meniscus", -38, 0.006, 40), group("bi-g2", "front cell", -18, 0.011, 44, ["positive", "cemented"]), group("bi-g3", "central cell", 0, -0.003, 32), group("bi-g4", "rear cell", 18, 0.011, 44, ["cemented", "positive"]), group("bi-g5", "rear meniscus", 38, 0.006, 40, ["cemented", "positive"])],
-      { stopPosition: 0, symmetryTendency: "high", backFocusTendency: "short", speedTendency: "moderate", defaultSensorPosition: 58, defaultApertureSize: 20 },
+      [
+        group("bi-g1", "front meniscus", -52, 0.006, 46),
+        group("bi-g2", "front cell", -26, 0.011, 48, ["positive", "cemented"]),
+        group("bi-g3", "central cell", 0, -0.003, 34),
+        group("bi-g4", "rear cell", 26, 0.011, 48, ["cemented", "positive"]),
+        group("bi-g5", "rear meniscus", 52, 0.006, 46, ["cemented", "positive"]),
+      ],
+      { stopPosition: 0, symmetryTendency: "high", backFocusTendency: "short", speedTendency: "moderate", defaultSensorPosition: 74, defaultApertureSize: 20 },
     ),
   },
   {
@@ -316,7 +405,7 @@ export const lenses: LensArchitecture[] = [
     name: "Distagon / Retrofocus",
     category: "Retrofocus wide-angle",
     elements: 8,
-    groups: 7,
+    groups: 5,
     description: "A wide-angle SLR-friendly archetype using a negative front group to increase back focus.",
     whyMatters: "Retrofocus lenses made practical wide-angle photography possible on SLRs by leaving room for the mirror while keeping a wide field of view.",
     traits: ["long back focus", "large front negative group", "SLR mirror clearance", "wide-angle perspective"],
@@ -337,9 +426,30 @@ export const lenses: LensArchitecture[] = [
       ],
     },
     playground: playgroundPreset(
-      [group("di-g1", "negative front", -42, -0.014, 54, ["negative", "negative"]), group("di-g2", "wide corrector", -22, 0.006, 44, ["positive", "cemented"]), group("di-g3", "main positive", 0, 0.014, 42, ["positive", "cemented"]), group("di-g4", "rear corrector", 22, 0.006, 36), group("di-g5", "field group", 38, 0.004, 32)],
-      { stopPosition: 6, symmetryTendency: "low", backFocusTendency: "long", speedTendency: "moderate", defaultSensorPosition: 104, defaultApertureSize: 22 },
+      [
+        group("di-g1", "front negative group", -50, -0.026, 68, ["negative", "negative"]),
+        group("di-g2", "positive corrector", -22, 0.01, 48),
+        group("di-g3", "main correcting group", -4, 0.012, 44, ["positive", "cemented"]),
+        group("di-g4", "rear positive group", 22, 0.018, 42, ["positive", "cemented"]),
+        group("di-g5", "field positive", 44, 0.006, 34),
+      ],
+      { stopPosition: 6, symmetryTendency: "low", backFocusTendency: "long", speedTendency: "moderate", defaultSensorPosition: 126, defaultApertureSize: 22 },
     ),
+    technicalPrescription: technicalPrescription("distagon-retrofocus-tech", "Distagon / Retrofocus approximate paraxial prescription", 126, [
+      surface("di-s1", -40, 5, 34, 1, 1.62, { label: "front negative group", glass: "flint" }),
+      surface("di-s2", 72, 12, 33, 1.62, 1),
+      surface("di-s3", 58, 4, 25, 1, 1.58, { label: "positive corrector", glass: "crown" }),
+      surface("di-s4", -45, 6, 24, 1.58, 1),
+      surface("di-s5", 42, 3, 22, 1, 1.62, { label: "main correcting group", glass: "dense crown" }),
+      surface("di-s6", -32, 2, 21, 1.62, 1.72, { label: "cemented interface", glass: "flint" }),
+      surface("di-s7", -64, 7, 21, 1.72, 1),
+      surface("di-stop", Infinity, 7, 11, 1, 1, { label: "stop", isStop: true }),
+      surface("di-s8", 34, 5, 20, 1, 1.64, { label: "rear positive group", glass: "dense crown" }),
+      surface("di-s9", -48, 3, 19, 1.64, 1.72, { label: "cemented interface", glass: "flint" }),
+      surface("di-s10", 72, 8, 19, 1.72, 1),
+      surface("di-s11", 58, 4, 17, 1, 1.58, { label: "field positive", glass: "crown" }),
+      surface("di-s12", -72, 60, 17, 1.58, 1),
+    ]),
   },
   {
     id: "petzval",
